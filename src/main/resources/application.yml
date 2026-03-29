@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: url-shortener
+  datasource:
+    url: jdbc:mysql://localhost:3306/urldb?autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=false
+    username: root
+    password: pa55w0rd
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+logging:
+  level:
+    com.mercedes.urlshortener: INFO
+    org.springframework: WARN

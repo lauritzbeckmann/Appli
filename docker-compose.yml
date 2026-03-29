@@ -1,0 +1,41 @@
+services:
+  api-server:
+    container_name: urlshortener-springboot
+    build:
+      context: .
+      dockerfile: api.Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://api-db:3306/urldb?autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=urlshortener
+      - SPRING_DATASOURCE_PASSWORD=123456
+    ports:
+      - "8080:8080"
+    networks:
+      - urlshortener-mysql-network
+    depends_on:
+      api-db:
+        condition: service_healthy
+
+  api-db:
+    container_name: mysqlurldb
+    build:
+      context: .
+      dockerfile: db.Dockerfile
+    networks:
+      - urlshortener-mysql-network
+    environment:
+      - MYSQL_ROOT_PASSWORD=pa55w0rd
+      - MYSQL_DATABASE=urldb
+      - MYSQL_USER=urlshortener
+      - MYSQL_PASSWORD=123456
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+    ports:
+      - '3306:3306'
+
+networks:
+  urlshortener-mysql-network:
